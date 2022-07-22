@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script src="jquery-3.5.1.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" type="image/png" href="https://img.icons8.com/material-outlined/344/puzzle.png" />
+    <title>AI SAPIEN</title>
+
+    <style>
+        html {
+            font-size: 16px;
+        }
+
+        body {
+            background-color: #9fafca;
+            margin: 0;
+            font-family: sans-serif;
+            font-weight: bold;
+            color: #0e387a;
+        }
+
+        .container {
+            width: 100%;
+            margin: 3.2rem auto 0 auto;
+        }
+
+        @media(min-width: 576px) {
+            .container {
+                max-width: 540px;
+            }
+        }
+            
+        @media(min-width: 768px) {
+            .container {
+                max-width: 720px
+            }
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        h1 {
+            font-weight: bold;
+        }
+
+        #survey-form {
+            background-color: #0e387a;
+            padding: 2.3rem 0.5rem;
+            border-radius: 0.3rem;
+        }
+
+        .form-input {
+            margin: 0 2.5rem 1.2rem 2rem;
+            display: flex;
+            justify-content: center;
+        }
+
+        .form-input-size {
+            display: block;
+            width: 100%;
+            height: 1.5rem;
+            padding: 0.3rem 0.4rem;
+            border-radius: 0.2rem;
+            outline: 0;
+            border-style: none;
+            margin-top: 0.4rem;
+            font-weight: bold;
+        }
+
+        #radio-btn,
+        #check-box {
+            margin-right: 0.5rem;
+            min-height: 1.2rem;
+            min-width: 1.2rem;
+        }
+
+        label {
+            display: flex;
+            align-items: center;
+            font-size: 1.125rem;
+            margin-bottom: 0.5rem;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 6rem;
+            resize: vertical;
+            padding: 0.5rem 0 0 0.5rem;
+        }
+
+        #submit {
+            width: 30%;
+            padding: 0.8rem;
+            background-color: #9fafca;
+            font-weight: bold;
+            color: #0e387a;
+            border-radius: 0.2rem;
+            cursor: pointer;
+            border: none;
+        }
+
+        img {
+            width: 100%;
+            box-shadow: 0px 0px 8px #9fafca;
+            border-radius: 0.2rem;
+        }
+
+        .line {
+            margin-top: 3.2rem;
+            border-color: #0e387a
+        }
+
+        .container2 {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 3.2rem;
+            padding: 2.3rem;
+            border-radius: 0.3rem;
+            background-color: #0e387a;
+        }
+    </style>
+
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1 id='title'>AI SAPIEN</h1>
+            <p>
+                Text to Image Converter
+            </p>
+        </header>
+
+        <form id='survey-form' action="/generate" method="POST">
+            <div class='form-input'>
+                <input type='text' name='text' placeholder='A mouse singing, Leonardo da Vinci Painting' minlength="3" class='form-input-size' required/>
+            </div>
+            <div class='form-input'>
+                <button type='submit' id='submit'>Generate</button>
+            </div>
+        </form>
+        <hr class="line"></hr>
+        <div class="container2">
+            <img id="img" src={{data}} />
+        </div>
+    </div>
+</body>
+
+</html>
+
