@@ -1,3 +1,4 @@
+import flask
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -6,19 +7,17 @@ from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.keys import Keys
 import os
 import time
-from flask import Flask, render_template, request, make_response, Response
+from flask import Flask, render_template, request, make_response, Response, jsonify
+from urllib.parse import unquote
 
 app = Flask(__name__)
 
-@app.route('/')
-def home():
-    return render_template("index.html", data="https://i.pinimg.com/originals/b0/68/5b/b0685b0e8c16e8cb57534de738f446a0.gif")
-
-
-@app.route('/generate', methods=['POST', 'GET'])
+@app.route('/', methods=['POST', 'GET'])
 def generate():
 
-    output = request.form.to_dict()
+    # output = request.form.to_dict()
+
+    #  --- PRODUCTION --- #
 
     chrome_options = webdriver.ChromeOptions()
     chrome_options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
@@ -27,54 +26,59 @@ def generate():
     chrome_options.add_argument("--no-sandbox")
     driver = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), options=chrome_options)
 
+    #  --- DEVELOPMENT --- #
+
     # options = webdriver.ChromeOptions()
     # options.binary_location = r"C:\Program Files\Google\Chrome\Application\chrome.exe"
     # chrome_driver_binary = r"C:\Users\princ\OneDrive\Documents\zulfi\AI Sapien\chromedriver.exe"
     # options.headless = True
     # driver = webdriver.Chrome(chrome_driver_binary, chrome_options=options)
 
+    #  --- ----------- --- #
 
-    driver.get("https://replicate.com/kuprel/min-dalle")  
+    text = request.args.get('q', default = 'A mango tree on moon, 4k, Photorealetic', type = str)
+    text = unquote(text)
+    print('-----------')
+    print(text)
+    print('-----------')
+    driver.get("https://www.craiyon.com/")  
 
     time.sleep(1)  
-
-    # Finding textbox and changing value
-    # value = "arguments[0].value = " + output["text"] + ';'
     
-    textBox = driver.find_element(By.XPATH, '//*[@id="tabs--1--panel--0"]/div/div/div[1]/form/div[1]/input')
-    textBox.send_keys(Keys.CONTROL + "a")      
-    textBox.send_keys(Keys.BACK_SPACE)
-    textBox.send_keys(output["text"])
-    # driver.execute_script(value, textBox)
-
-    # Unchecking Progressive Images
-    driver.find_element(By.XPATH, '//*[@id="tabs--1--panel--0"]/div/div/div[1]/form/div[3]/div/input').click()
-
-    # Submit Button
-    driver.find_element(By.XPATH, '//*[@id="tabs--1--panel--0"]/div/div/div[1]/form/button[1]/span').click()
+    driver.execute_script("document.querySelector('#prompt').innerHTML = '" + text + "';")
+    driver.execute_script("document.querySelector('#app > div > div > div.mt-4.flex.w-full.justify-center.rounded-lg.rounded-b-none > button').click();")
 
     def finder():
         try:
-            if driver.find_element(By.XPATH, '//*[@id="tabs--1--panel--0"]/div/div/div[2]/div/div[1]/div/div/a/img').is_displayed():
+            if driver.find_element(By.XPATH, '//*[@id="app"]/div/div/div[2]/div/div/div/div[1]/div[1]/img').is_displayed():
                 print('------ found ------')
         except NoSuchElementException:
-            time.sleep(3)
+            time.sleep(5)
             finder()
 
     finder()
 
-    # time.sleep(3)
-
     # get the image source
-    img = driver.find_element(By.XPATH, '//*[@id="tabs--1--panel--0"]/div/div/div[2]/div/div[1]/div/div/a/img')
-
-    src = img.get_attribute('src')
-
-    print(src)
+    p1 = driver.find_element(By.XPATH, '//*[@id="app"]/div/div/div[2]/div/div/div/div[1]/div[1]/img').get_attribute('src')
+    p2 = driver.find_element(By.XPATH, '//*[@id="app"]/div/div/div[2]/div/div/div/div[1]/div[2]/img').get_attribute('src')
+    p3 = driver.find_element(By.XPATH, '//*[@id="app"]/div/div/div[2]/div/div/div/div[1]/div[3]/img').get_attribute('src')
+    p4 = driver.find_element(By.XPATH, '//*[@id="app"]/div/div/div[2]/div/div/div/div[1]/div[4]/img').get_attribute('src')
+    p5 = driver.find_element(By.XPATH, '//*[@id="app"]/div/div/div[2]/div/div/div/div[1]/div[5]/img').get_attribute('src')
+    p6 = driver.find_element(By.XPATH, '//*[@id="app"]/div/div/div[2]/div/div/div/div[1]/div[6]/img').get_attribute('src')
+    p7 = driver.find_element(By.XPATH, '//*[@id="app"]/div/div/div[2]/div/div/div/div[1]/div[7]/img').get_attribute('src')
+    p8 = driver.find_element(By.XPATH, '//*[@id="app"]/div/div/div[2]/div/div/div/div[1]/div[8]/img').get_attribute('src')
+    p9 = driver.find_element(By.XPATH, '//*[@id="app"]/div/div/div[2]/div/div/div/div[1]/div[9]/img').get_attribute('src')
 
     driver.close()
 
-    return render_template("index.html", data=src)
+    response = make_response(
+        jsonify(
+            {"p1": p1, "p2": p2, "p3": p3, "p4": p4, "p5": p5, "p6": p6, "p7": p7, "p8": p8, "p9": p9}
+        ),
+    )
+    response.headers["Content-Type"] = "application/json"
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    return response
 
 if __name__ == '__main__':
     app.run(debug=True)
