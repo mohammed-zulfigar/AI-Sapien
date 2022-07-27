@@ -70,7 +70,7 @@ def generate():
     p9 = driver.find_element(By.XPATH, '//*[@id="app"]/div/div/div[2]/div/div/div/div[1]/div[9]/img').get_attribute('src')
 
     with open("imageData.txt", "r+") as fh:
-    fh.write(p1)
+        fh.write(p1)
     
     driver.close()
 
