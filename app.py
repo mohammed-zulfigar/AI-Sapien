@@ -69,16 +69,19 @@ def generate():
     p8 = driver.find_element(By.XPATH, '//*[@id="app"]/div/div/div[2]/div/div/div/div[1]/div[8]/img').get_attribute('src')
     p9 = driver.find_element(By.XPATH, '//*[@id="app"]/div/div/div[2]/div/div/div/div[1]/div[9]/img').get_attribute('src')
 
+    with open("imageData.txt", "r+") as fh:
+    fh.write(p1)
+    
     driver.close()
 
-    response = make_response(
-        jsonify(
-            {"p1": p1, "p2": p2, "p3": p3, "p4": p4, "p5": p5, "p6": p6, "p7": p7, "p8": p8, "p9": p9}
-        ),
-    )
-    response.headers["Content-Type"] = "application/json"
-    response.headers.add('Access-Control-Allow-Origin', '*')
-    return response
+#     response = make_response(
+#         jsonify(
+#             {"p1": p1, "p2": p2, "p3": p3, "p4": p4, "p5": p5, "p6": p6, "p7": p7, "p8": p8, "p9": p9}
+#         ),
+#     )
+#     response.headers["Content-Type"] = "application/json"
+#     response.headers.add('Access-Control-Allow-Origin', '*')
+#     return response
 
 if __name__ == '__main__':
     app.run(debug=True)
