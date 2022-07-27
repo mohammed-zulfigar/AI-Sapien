@@ -71,6 +71,7 @@ def generate():
 
     with open("imageData.txt", "r+") as fh:
         fh.write(p1)
+    print('done')
     
     driver.close()
 
