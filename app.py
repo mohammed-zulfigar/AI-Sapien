@@ -15,20 +15,20 @@ def generate():
 
     #  --- PRODUCTION --- #
 
-    # chrome_options = webdriver.ChromeOptions()
-    # chrome_options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
-    # chrome_options.add_argument("--headless")
-    # chrome_options.add_argument("--disable-dev-shm-usage")
-    # chrome_options.add_argument("--no-sandbox")
-    # driver = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), options=chrome_options)
+    chrome_options = webdriver.ChromeOptions()
+    chrome_options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
+    chrome_options.add_argument("--headless")
+    chrome_options.add_argument("--disable-dev-shm-usage")
+    chrome_options.add_argument("--no-sandbox")
+    driver = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), options=chrome_options)
 
     #  --- DEVELOPMENT --- #
 
-    options = webdriver.ChromeOptions()
-    options.binary_location = r"C:\Program Files\Google\Chrome\Application\chrome.exe"
-    chrome_driver_binary = r"C:\Users\princ\OneDrive\Documents\zulfi\AI Sapien\chromedriver.exe"
-    options.headless = True
-    driver = webdriver.Chrome(chrome_driver_binary, chrome_options=options)
+#     options = webdriver.ChromeOptions()
+#     options.binary_location = r"C:\Program Files\Google\Chrome\Application\chrome.exe"
+#     chrome_driver_binary = r"C:\Users\princ\OneDrive\Documents\zulfi\AI Sapien\chromedriver.exe"
+#     options.headless = True
+#     driver = webdriver.Chrome(chrome_driver_binary, chrome_options=options)
 
     #  --- ----------- --- #
 
