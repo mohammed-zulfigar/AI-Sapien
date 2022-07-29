@@ -1,14 +1,10 @@
-import flask
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import NoSuchElementException
-from selenium.webdriver.common.keys import Keys
-import os
 import time
 from flask import Flask, render_template, request, make_response, Response, jsonify
 from urllib.parse import unquote
+import pymysql
 
 app = Flask(__name__)
 
@@ -19,20 +15,20 @@ def generate():
 
     #  --- PRODUCTION --- #
 
-    chrome_options = webdriver.ChromeOptions()
-    chrome_options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
-    chrome_options.add_argument("--headless")
-    chrome_options.add_argument("--disable-dev-shm-usage")
-    chrome_options.add_argument("--no-sandbox")
-    driver = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), options=chrome_options)
+    # chrome_options = webdriver.ChromeOptions()
+    # chrome_options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
+    # chrome_options.add_argument("--headless")
+    # chrome_options.add_argument("--disable-dev-shm-usage")
+    # chrome_options.add_argument("--no-sandbox")
+    # driver = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), options=chrome_options)
 
     #  --- DEVELOPMENT --- #
 
-    # options = webdriver.ChromeOptions()
-    # options.binary_location = r"C:\Program Files\Google\Chrome\Application\chrome.exe"
-    # chrome_driver_binary = r"C:\Users\princ\OneDrive\Documents\zulfi\AI Sapien\chromedriver.exe"
-    # options.headless = True
-    # driver = webdriver.Chrome(chrome_driver_binary, chrome_options=options)
+    options = webdriver.ChromeOptions()
+    options.binary_location = r"C:\Program Files\Google\Chrome\Application\chrome.exe"
+    chrome_driver_binary = r"C:\Users\princ\OneDrive\Documents\zulfi\AI Sapien\chromedriver.exe"
+    options.headless = True
+    driver = webdriver.Chrome(chrome_driver_binary, chrome_options=options)
 
     #  --- ----------- --- #
 
@@ -43,15 +39,22 @@ def generate():
     print('-----------')
     driver.get("https://www.craiyon.com/")  
 
-    time.sleep(1)  
+    time.sleep(1)
     
+    print('----- URL LOADED -----')
+
     driver.execute_script("document.querySelector('#prompt').innerHTML = '" + text + "';")
+        
+    print('----- TEXT INPUT -----')
+
     driver.execute_script("document.querySelector('#app > div > div > div.mt-4.flex.w-full.justify-center.rounded-lg.rounded-b-none > button').click();")
+    
+    print('----- SUBMIT CLICK -----')
 
     def finder():
         try:
             if driver.find_element(By.XPATH, '//*[@id="app"]/div/div/div[2]/div/div/div/div[1]/div[1]/img').is_displayed():
-                print('------ found ------')
+                print('----- FOUND IMAGES -----')
         except NoSuchElementException:
             time.sleep(5)
             finder()
@@ -68,21 +71,30 @@ def generate():
     p7 = driver.find_element(By.XPATH, '//*[@id="app"]/div/div/div[2]/div/div/div/div[1]/div[7]/img').get_attribute('src')
     p8 = driver.find_element(By.XPATH, '//*[@id="app"]/div/div/div[2]/div/div/div/div[1]/div[8]/img').get_attribute('src')
     p9 = driver.find_element(By.XPATH, '//*[@id="app"]/div/div/div[2]/div/div/div/div[1]/div[9]/img').get_attribute('src')
-
-    with open("imageData.txt", "r+") as fh:
-        fh.write(p1)
-    print('done')
     
+    # Delete record
+    conn = pymysql.connect(host="zulfi.me", port=3306, user="zulfi_public", passwd="Qwerty@007", db="zulfi_ai-sapien")
+    myCursor = conn.cursor()
+    print(myCursor)
+
+    sql = """delete from `table` where 1
+        """
+    myCursor.execute(sql)
+    conn.commit()
+    print(myCursor.rowcount, "record deleted.")
+
+    # Add record
+    sql = """insert into `table` (title, data1, data2, data3, data4, data5, data6, data7, data8, data9)
+            values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s) 
+        """
+    val = (text, p1, p2, p3, p4, p5, p6, p7, p8, p9)
+    myCursor.execute(sql, val)
+    conn.commit()
+    print(myCursor.rowcount, "record inserted.")
+
     driver.close()
 
-#     response = make_response(
-#         jsonify(
-#             {"p1": p1, "p2": p2, "p3": p3, "p4": p4, "p5": p5, "p6": p6, "p7": p7, "p8": p8, "p9": p9}
-#         ),
-#     )
-#     response.headers["Content-Type"] = "application/json"
-#     response.headers.add('Access-Control-Allow-Origin', '*')
-#     return response
+    return "SUCCESS"
 
 if __name__ == '__main__':
     app.run(debug=True)
