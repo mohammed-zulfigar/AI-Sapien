@@ -10,6 +10,32 @@ import os
 app = Flask(__name__)
 
 @app.route('/', methods=['POST', 'GET'])
+def re():
+    # Delete record
+    conn = pymysql.connect(host="zulfi.me", port=3306, user="zulfi_public", passwd="Qwerty@007", db="zulfi_ai-sapien")
+    myCursor = conn.cursor()
+    print(myCursor)
+
+    sql = """delete from `table` where 1
+        """
+    myCursor.execute(sql)
+    conn.commit()
+    print(myCursor.rowcount, "record deleted.")
+
+    # Add record
+    sql = """insert into `table` (title, data1, data2, data3, data4, data5, data6, data7, data8, data9)
+            values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s) 
+        """
+    val = ('text', 'p1', 'p2', 'p3', 'p4', 'p5', 'p6', 'p7', 'p8', 'p9')
+    myCursor.execute(sql, val)
+    conn.commit()
+    print(myCursor.rowcount, "record inserted.")
+
+    driver.close()
+
+    return "SUCCESS"
+    
+@app.route('/re', methods=['POST', 'GET'])
 def generate():
 
     # output = request.form.to_dict()
